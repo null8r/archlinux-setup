@@ -13,7 +13,7 @@ exec-once = fcitx5 -d
 
 日本語キーボードの設定。
 ```bash
-vim /home/hogehoge/.config/hypr/hyprland.conf
+vim /home/hogehoge/.config/hypr/hyprland/general.conf
 ```
 `input`セクションを編集。
 ```
