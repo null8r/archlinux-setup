@@ -10,18 +10,15 @@ sudo timedatectl set-local-rtc 1
 timedatectl set-ntp true
 ```
 
-## LightDMのインストール
+## LightDMのインストール（なくても良い）
 ```bash
-sudo pacman -S lightdm lightdm-gtk-greeter
-sudo systemctl enable lightdm
+pacman -S lightdm lightdm-gtk-greeter
+systemctl enable lightdm
 ```
 
 ## 電源ボタンの変更
 電源ボタンをサスペンドに割り当てる。
-```bash
-vim /etc/systemd/logind.conf
-```
-以下を追加。
+`/etc/systemd/logind.conf`に以下を追加。
 ```
 HandlePowerKey=suspend
 ```
@@ -38,30 +35,24 @@ brightnessctl s 30%
 ## 指紋センサーの設定
 ```bash
 yay -S fprintd
-sudo systemctl enable fprintd
+systemctl enable fprintd
 ```
-
 指紋登録をする。
 ```bash
 fprintd-enroll
 ```
-
 指紋認証を有効にする。
-```bash
-sudo vim /etc/pam.d/system-auth
-```
-以下を追加。
+`/etc/pam.d/system-auth`に以下を追加。
 ```
 auth sufficient pam_fprintd.so
 ```
-
 
 ## ソフトウェア
 ```bash
 yay -S --needed \
     firefox zen-browser-bin google-chrome \
     docker docker-compose visual-studio-code-bin \
-    protonvpn-cli proton-pass \
+    proton-vpn-cli proton-pass \
     discord slack-desktop \
     vlc obs-studio \
     kdeconnect  
@@ -69,4 +60,9 @@ yay -S --needed \
 ユーザーをdockerグループに追加
 ```bash
 sudo usermod -aG docker $USER
+```
+
+## 音が出ない場合
+```bash
+systemctl --user enable --now pipewire pipewire-pulse wireplumber
 ```

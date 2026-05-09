@@ -4,7 +4,7 @@
 # 日本語環境
 `fcitx5`の自動起動。
 ```bash
-vim /home/hogehoge/.config/hypr/hyprland.conf
+vim ~/.config/hypr/hyprland.conf
 ```
 ここに以下を追加。
 ```
@@ -13,7 +13,7 @@ exec-once = fcitx5 -d
 
 日本語キーボードの設定。
 ```bash
-vim /home/hogehoge/.config/hypr/hyprland/general.conf
+~/.config/hypr/hyprland/general.conf
 ```
 `input`セクションを編集。
 ```
@@ -26,7 +26,7 @@ input {
 # バーの日時を編集
 `yyyy/MM/dd (ddd)`の形式に変更する。
 ```bash
-cd /home/hogehoge/.config/quickshell/ii/modules/ii/bar
+~/.config/quickshell/ii/modules/ii/bar
 ```
 以下のように編集する。
 
@@ -63,4 +63,45 @@ StyledPopup {
 
     ...省略...
 }
+```
+
+# Night Lightの無効化
+勝手に起動されてウザいので無効化する。
+```bash
+~/.config/quickshell/ii/services/Hyprsunset.qml
+```
+これを[Hyprsunset.qml](src/Hyprsunset.qml)のように編集する。
+
+# VPNインジケーターの設置
+ProtnVPNのインジケーターを設置する。
+```bash
+~/.config/quickshell/ii/modules/ii/bar
+```
+ここに[VpnIndicator.qml](src/VpnIndicator.qml)を作る。
+
+`BarContent.qml`の下の方に追記する。
+```diff
++ // VPN
++ Loader {
++     Layout.leftMargin: 4
++     active: true
++     sourceComponent: BarGroup {
++         VpnIndicator {}
++     }
++ }
+
+// Weather
+Loader {
+    ...省略...
+}
+```
+
+# PowerProfileを使いたい場合
+```bash
+yay -S power-profiles-daemon
+```
+
+# 音が出ない場合
+```bash
+systemctl --user enable --now pipewire pipewire-pulse wireplumber
 ```

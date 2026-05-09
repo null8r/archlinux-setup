@@ -121,10 +121,7 @@ arch-chroot /mnt
 ```
 
 ## ロケール設定
-```
-vim /etc/locale.gen
-```
-`en_US.UTF-8 UTF-8`と`ja_JP.UTF-8 UTF-8`をアンコメント。
+`vim /etc/locale.gen`を開いて、`en_US.UTF-8 UTF-8`と`ja_JP.UTF-8 UTF-8`をアンコメントする。
 
 続けて以下を実行。
 ```bash
@@ -166,6 +163,25 @@ visudo
 ```
 `%wheel ALL=(ALL:ALL) ALL`をアンコメント。
 
+## Swapの設定
+ハイバネートしたい場合はSwapを作成しておく。(--sizeはRAMの容量と同じかそれ以上にする)
+```bash
+mkswap -U clear --size 16G --file /swapfile
+swapon /swapfile
+```
+`/etc/fstab`に以下を追加。
+```
+/swapfile none swap defaults 0 0
+```
+
+## ハイバネートの設定
+`/etc/systemd/sleep.conf`に以下を追加。
+```
+AllowHibernation=yes
+HibernateDelaySec=3600
+```
+`3600`は一時間。
+
 ## 必要なものをインストール
 ```bash
 pacman -S grub efibootmgr os-prober networkmanager
@@ -179,9 +195,9 @@ grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=hogehoge
 ```
 
 ### Grubの設定変更
-```bash
-vim /etc/default/grub
-```
+`/etc/default/grub`を編集。
+
+起動ログを見たいので。
 コメントアウト：`GRUB_CMDLINE_LINUX_DEFAULT="なんたら"`<br>
 
 Windowsを認識させるため。<br>
@@ -246,8 +262,7 @@ pacman -S  noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono-nerd
 ```
 ## 日本語入力
 ```bash
-sudo pacman -S fcitx5 fcitx5-mozc fcitx5-gtk fcitx5-qt fcitx5-configtool
-vim /etc/environment
+pacman -S fcitx5 fcitx5-mozc fcitx5-gtk fcitx5-qt fcitx5-configtool
 ```
 `/etc/environment`に以下を追加。
 ```
