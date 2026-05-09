@@ -1,6 +1,13 @@
 # 細かいセットアップ（実行しなくても良い）
 [Hyprlandのインストール](01_install.md)が完了した後に行う細かいセットアップ。
 
+# 指紋ログインの設定
+ベースの[../02_setup.md](../02_setup.md)で指紋センサーの設定を行う。
+`/etc/pam.d/hyprlock`に以下を追加。
+```
+auth sufficient pam_fprintd.so
+```
+
 # 日本語環境
 `fcitx5`の自動起動。
 ```bash

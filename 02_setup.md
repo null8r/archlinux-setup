@@ -42,10 +42,12 @@ systemctl enable fprintd
 fprintd-enroll
 ```
 指紋認証を有効にする。
-`/etc/pam.d/system-auth`に以下を追加。
+`/etc/pam.d/`配下の`system-auth`・`login`に以下を追加。
 ```
 auth sufficient pam_fprintd.so
 ```
+
+登録がおかしくなったら、`sudo fprintd-delete ""`で削除してから再度登録する。
 
 ## ソフトウェア
 ```bash
@@ -65,4 +67,16 @@ sudo usermod -aG docker $USER
 ## 音が出ない場合
 ```bash
 systemctl --user enable --now pipewire pipewire-pulse wireplumber
+```
+
+## ProtonVPNの自動接続
+```bash
+mkdir -p ~/.config/systemd/user
+```
+`~/.config/systemd/user/protonvpn.service`を作成し、[protonvpn.service](src/protonvpn.service)をコピーする。
+有効化・起動・確認をする。
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now protonvpn.service
+systemctl --user status protonvpn.service
 ```

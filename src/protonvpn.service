@@ -1,0 +1,14 @@
+[Unit]
+Description=ProtonVPN-CLI
+After=network-online.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/protonvpn-cli connect --fastest
+ExecStop=/usr/bin/protonvpn-cli disconnect
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
