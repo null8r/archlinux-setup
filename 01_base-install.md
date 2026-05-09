@@ -164,6 +164,7 @@ visudo
 `%wheel ALL=(ALL:ALL) ALL`をアンコメント。
 
 ## Swapの設定
+Swapはファイルで作成する。
 ハイバネートしたい場合はSwapを作成しておく。(--sizeはRAMの容量と同じかそれ以上にする)
 ```bash
 mkswap -U clear --size 16G --file /swapfile
@@ -175,6 +176,17 @@ swapon /swapfile
 ```
 
 ## ハイバネートの設定
+`/etc/mkinitcpio.conf`の`HOOKS`セクションに`resume`を追加する。
+```
+HOOKS=(base udev autodetect modconf block filesystems keyboard resume fsck)
+```
+> `resume`は`filesystems`の *後* に必ず配置する。
+
+以下のコマンドで反映させる。
+```
+mkinitcpio -P
+```
+
 `/etc/systemd/sleep.conf`に以下を追加。
 ```
 AllowHibernation=yes
@@ -195,10 +207,18 @@ grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=hogehoge
 ```
 
 ### Grubの設定変更
-`/etc/default/grub`を編集。
+UUIDとオフセットを取得して、`resume`パラメータを追加する。
+```bash
+UUID=$(findmnt -no UUID -T /swapfile)
+OFFSET=$(sudo filefrag -v /swapfile | awk 'NR==4{print $4}' | cut -d. -f1)
 
+sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"resume=UUID=$UUID resume_offset=$OFFSET\"/" /etc/default/grub
+```
+
+`/etc/default/grub`を以下のように編集する。
 起動ログを見たいので。
 コメントアウト：`GRUB_CMDLINE_LINUX_DEFAULT="なんたら"`<br>
+さっき追加した`GRUB_CMDLINE_LINUX="resume=UUID= ...省略... "`は触らない。<br>
 
 Windowsを認識させるため。<br>
 アンコメント：`GRUB_DISABLE_OS_PROBER=false`
