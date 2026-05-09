@@ -30,6 +30,37 @@ input {
 }
 ```
 
+# ウィンドウルール
+`~/.config/hypr/custom/rules.conf`
+```
+# DiscordやSlackをスペシャルワークスペースに配置
+windowrule = match:class discord, workspace special:discord
+windowrule = match:class slack, workspace special:slack
+
+# ピクチャーインピクチャーを右下に配置
+windowrule = match:title ピクチャーインピクチャー, float on
+windowrule = match:title ピクチャーインピクチャー, pin on
+windowrule = match:title ピクチャーインピクチャー, size 20% 20%
+windowrule = match:title ピクチャーインピクチャー, move 1250 800
+
+# ダイアログの自動フロート
+windowrule = match:class org.kde.ark, float on
+
+# ピン留めされたウィンドウの枠線（桜色）
+windowrule = match:pin 1, border_color rgb(FFB7C5)
+windowrule = match:pin 1, border_size 2
+```
+
+`~/.config/hypr/custom/keybinds.conf`
+```
+# ProtonVPN接続
+bind = Super+Shift, V, exec, bash -c 'result=$(protonvpn connect | grep -oP "[\w ]+(?=\.)" | head -1); notify-send --app-name="ProtonVPN" "ProtonVPN" "$resultサーバーに接続しました。";' # ProtonVPN connect
+
+# スペシャルワークスペースの切り替え
+bind = Super+Shift, D, togglespecialworkspace, discord # Toggle Discord workspace
+bind = Super+Shift, S, togglespecialworkspace, slack # Toggle Slack workspace
+```
+
 # バーの日時を編集
 `yyyy/MM/dd (ddd)`の形式に変更する。
 ```bash
