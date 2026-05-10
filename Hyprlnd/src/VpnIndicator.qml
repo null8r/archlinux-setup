@@ -76,9 +76,15 @@ MouseArea {
                 : root.connected
                     ? Appearance.colors.colPrimary
                     : Appearance.colors.colOnLayer0
+            
+            rotation: root.loading ? rotationAnim.angle : 0
 
-            RotationAnimation on rotation {
+            NumberAnimation {
+                id: rotationAnim
+                property real angle: 0
                 running: root.loading
+                target: rotationAnim
+                property: "angle"
                 from: 0; to: 360
                 duration: 1000
                 loops: Animation.Infinite
