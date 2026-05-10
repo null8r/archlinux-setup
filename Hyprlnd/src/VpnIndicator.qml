@@ -16,13 +16,43 @@ MouseArea {
     property string vpnServer: ""
     property string vpnLoad: ""
     property string vpnProtocol: ""
-    property bool connected: vpnStatus.toLowerCase() === "connected"
+    property bool connected: false
+    property bool prevConnected: false
     property bool loading: false
+
+    Process {
+        id: checkProcess
+        command: ["bash", "-c", "ip link show proton0 2>/dev/null | grep -c UP"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                const isConnected = data.trim() === "1"
+                if (isConnected && !root.prevConnected) {
+                    statusProcess.running = true
+                }
+                if (!isConnected) {
+                    root.vpnStatus = "Disconnected"
+                    root.vpnServer = ""
+                    root.vpnLoad = ""
+                    root.vpnProtocol = ""
+                }
+                root.prevConnected = root.connected
+                root.connected = isConnected
+                root.loading = false
+            }
+        }
+    }
+
+    Timer {
+        interval: 1000
+        repeat: true
+        running: true
+        onTriggered: checkProcess.running = true
+    }
 
     Process {
         id: statusProcess
         command: ["bash", "-c", "protonvpn status 2>/dev/null"]
-        running: true
         stdout: SplitParser {
             onRead: data => {
                 const line = data.trim()
@@ -32,16 +62,6 @@ MouseArea {
                 if (line.startsWith("Protocol:")) root.vpnProtocol = line.split(":")[1].trim()
             }
         }
-        onRunningChanged: {
-            if (!running) root.loading = false
-        }
-    }
-
-    Timer {
-        interval: 10000
-        repeat: true
-        running: true
-        onTriggered: statusProcess.running = true
     }
 
     Process {
@@ -52,7 +72,7 @@ MouseArea {
         onRunningChanged: {
             if (!running) {
                 root.loading = false
-                statusProcess.running = true
+                checkProcess.running = true
             }
         }
     }
@@ -76,7 +96,7 @@ MouseArea {
                 : root.connected
                     ? Appearance.colors.colPrimary
                     : Appearance.colors.colOnLayer0
-            
+
             rotation: root.loading ? rotationAnim.angle : 0
 
             NumberAnimation {
@@ -110,9 +130,9 @@ MouseArea {
                 label: "Proton VPN"
             }
             StyledPopupValueRow {
-              icon: "circle"
-              label: "status"
-              value: root.vpnStatus
+                icon: "circle"
+                label: "status"
+                value: root.vpnStatus
             }
             StyledPopupValueRow {
                 icon: "dns"
